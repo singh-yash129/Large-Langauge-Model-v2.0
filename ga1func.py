@@ -19,8 +19,8 @@ def make_http_request(email):
     response = requests.get(url)
     return response.json()
 
-def run_npx_command(filename):
-    file_path = os.path.join(os.getcwd(), 'uploads', 'README.md')
+def run_npx_command(filename:str):
+    file_path = os.path.join(os.getcwd(), 'tmp', filename)
     command = f"npx -y prettier@3.4.2 {file_path} | sha256sum"
     return subprocess.getoutput(command)
 

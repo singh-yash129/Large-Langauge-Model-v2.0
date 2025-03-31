@@ -7,12 +7,14 @@ import os
 import requests
 import json
 import ga1func, ga2func, ga3func, ga4func, ga5func
+from prompt import prompt,TASK_FUNCTIONS
+
 
 # Initialize FastAPI app
 app = FastAPI()
 
 # Set your AIPROXY_TOKEN
-AIPROXY_TOKEN = os.environ("AIPROXY_TOKEN")
+AIPROXY_TOKEN = os.environ.get("AIPROXY_TOKEN")
 AIPROXY_URL = "https://aiproxy.sanand.workers.dev/openai/v1/chat/completions"
 
 
@@ -81,142 +83,40 @@ TASK_IMPLEMENTATIONS = {
 
 
 # Function mapping
-TASK_FUNCTIONS = {
-    "check_file_integrity": ("file_path",),
-    "compare_files": ("zip_filename",),
-    "count_wednesdays": ("start_date", "end_date"),
-    "excel_formula": ("func"),
-    "extract_all_text_from_html": ("html_content",),
-    "extract_csv_from_zip": ("zip_filename",),
-    "extract_hidden_value": ("html_content",),
-    "find_git_repo_size": ("repo_path",),
-    "get_vscode_version": (),
-    "google_sheets_formula": ("func"),
-    "list_large_files": ("zip_filename", "min_size", "date"),
-    "make_http_request": ("email",),
-    "move_and_rename_files": ("zip_filename",),
-    "multi_cursor_to_json": ("input_text",),
-    "process_encoded_files": ("zip_filename", "symbols"),
-    "replace_text_in_files": ("zip_filename",),
-    "run_npx_command": ("filename",),
-    "sort_json": ("json_list",),
-    "sql_ticket_sales": ("db_path",),
-    "sum_css_values": ("html_content",),
-    "use_github": ("repo_url", "email"),
-    "compress_image": ("image_path", "output_path", "max_size"),
-    "create_github_action": (),
-    "deploy_github_pages": (),
-    "deploy_vercel_api": (),
-    "generate_markdown": (),
-    "google_colab_test": (),
-    "image_library_colab": (),
-    "push_docker_image": (),
-    "run_fastapi_server": (),
-    "run_llamafile": (),
-    "analyze_sentiment": ("text",),
-    "classify_text": ("text",),
-    "extract_invoice_text": ("image_base64",),
-    "generate_addresses": (),
-    "generate_image_description": ("image_base64",),
-    "generate_short_story": ("prompt",),
-    "generate_text_embeddings": ("text_list",),
-    "summarize_text": ("text",),
-    "translate_to_spanish": ("text",),
-    "count_ducks_on_page6": (),
-    "extract_student_marks": ("pdf_path",),
-    "fetch_low_rated_movies": (),
-    "fetch_wikipedia_outline": ("country",),
-    "generate_github_action": (),
-    "get_hn_go_post": (),
-    "get_islamabad_forecast": ("api_key",),
-    "get_max_latitude_lima": (),
-    "get_newest_berlin_github_user": (),
-    "pdf_to_markdown": ("pdf_path",),
-    "aggregate_sales_by_city": ("file_path",),
-    "calculate_average_temperature": ("json_file",),
-    "clean_excel_and_compute_margin": ("file_path", "date_filter", "product_filter", "country_filter"),
-    "count_oi_occurrences": ("json_file",),
-    "count_successful_get_requests": ("log_file",),
-    "count_unique_student_ids": ("file_path",),
-    "extract_emails_from_text": ("file_path",),
-    "find_top_data_consumer": ("log_file",),
-    "reconstruct_scrambled_image": ("image_file", "mapping_file"),
-    "sum_sales_from_json": ("file_path",)
-}
+
 
 # Function to call respective task function (dummy implementation)
 def execute_task(task_name, **kwargs):
-    function = TASK_IMPLEMENTATIONS.get(task_name)
-    if function:
-        return function(**kwargs)  # ✅ Call actual function
-    return "Unknown task"
+
+        function = TASK_IMPLEMENTATIONS.get(task_name)
+        if function:
+            return function(**kwargs)  # ✅ Call actual function
+        return "Unknown task"
 
 
-prompt = f"""
-You are an AI assistant trained to solve data science assignments efficiently. Given a user question, determine if:
-1. The question can be answered directly with your knowledge.
-2. The question requires executing a function from a predefined list.
-
-**Rules:**
-- If a function is needed, return a JSON object in this format:
-  {{
-      "function": "function_name",
-      "parameters": {{ "param1": "value1", "param2": "value2" }}
-  }}
-- Only use function names from this list: {json.dumps(list(TASK_FUNCTIONS.keys()))}.
-- Ensure all required parameters for the function are included.
-- If the function does not require parameters, return `"parameters": {{}}`.
-- **Do NOT answer in plain text** if a function is available.
-
-**Example Outputs:**
-1. **Direct Answer:**
-   *User:* What is 2 + 2?  
-   *Response:* "4"
-
-2. **Function Call Required:**
-   *User:* "What is the output of 'code -s' in VS Code?"  
-   *Response:*  
-   ```json
-   {{
-       "function": "get_vscode_version",
-       "parameters": {{}}
-   }}
-   ```
-3. **Function Call Required**
-   *User:* "Download the provided README.md file. In the directory where you downloaded it, make sure it is called README.md, and run 'npx -y prettier@3.4.2 README.md | sha256sum'. What is the output?"   
-      *Response:*  
-   ```json
-   {{
-       "function": "run_npx_command",
-       "parameters": {{
-           "filename": "README.md"
-
-       }}
-   }}
-   ```
- 4.**Function Call Required**
-   *User:* "Running `uv run --with httpie -- https [URL]` installs the Python package `httpie` and sends a HTTPS request to the URL.
-   - Send a HTTPS request to `https://httpbin.org/get` with the URL encoded parameter `email` set to your email.
-   - What is the JSON output of the command? (Paste only the JSON body, not the headers)"   
-      *Response:*  
-
-{{
-    "function": "make_http_request",
-    "parameters": {{
-       
-     
-            "email": "hjshj@gmail.com"
-        
-    }}
-}}
-"""
-
+UPLOAD_DIR='tmp'
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 @app.post("/api/")
 async def answer_question(question: str = Form(...), file: UploadFile = File(None)):
     try:
-        if(file):
-            file_path = os.path.join('uploads', file.filename)
-            file.save(file_path)
+        saved_file_path = None
+        if file:
+            if isinstance(file.filename, str) and file.filename.strip():
+    # Ensure the filename does not contain invalid characters
+                saved_file_path = os.path.join(UPLOAD_DIR, file.filename)
+            else:
+                raise ValueError("Invalid or empty file name.")
+            
+            # Check if the file already exists, and delete the old one if so
+            if os.path.exists(saved_file_path):
+                os.remove(saved_file_path)
+                print(f"Existing file {saved_file_path} deleted.")
+
+            # Save the new file to the 'upload' directory
+            with open(saved_file_path, "wb") as buffer:
+                buffer.write(await file.read())
+            
+            print(f"File saved at: {saved_file_path}")
 
         headers = {
             "Authorization": f"Bearer {AIPROXY_TOKEN}",
@@ -231,8 +131,7 @@ async def answer_question(question: str = Form(...), file: UploadFile = File(Non
         
         if response.status_code != 200:
             raise HTTPException(status_code=response.status_code, detail=response_json.get("error", "Unknown error"))
-        print("Response Status Code:", response.status_code)
-        print("Raw Response Text:", response.text)
+
 
 
         print("Raw AI response:", response_json)
@@ -257,3 +156,4 @@ async def answer_question(question: str = Form(...), file: UploadFile = File(Non
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
