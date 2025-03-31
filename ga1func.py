@@ -37,13 +37,38 @@ def count_wednesdays(start_date, end_date):
     return sum(1 for d in pd.date_range(start, end) if d.weekday() == 2)
 
 def extract_csv_from_zip(zip_filename):
-    with zipfile.ZipFile(zip_filename, 'r') as zip_ref:
-        zip_ref.extractall("./extracted")
-    df = pd.read_csv("./extracted/extract.csv")
-    return df["answer"].iloc[0]
+    zip_path = os.path.join(os.getcwd(),"tmp", zip_filename)  # Assume the ZIP file is in /tmp
+    extract_path = os.path.join(os.getcwd(),"tmp", "extracted")  # Extract inside /tmp/extracted
+    os.makedirs(extract_path, exist_ok=True)  # Ensure the directory exists
 
-def sort_json(json_list):
-    return json.dumps(sorted(json_list, key=lambda x: (x["age"], x["name"])), separators=(",", ":"))
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall(extract_path)  # Extract files into /tmp/extracted
+
+    csv_file_path = os.path.join(extract_path, "extract.csv")  # Expected CSV file path
+
+    if not os.path.exists(csv_file_path):
+        return f"Error: {csv_file_path} not found!"
+
+    df = pd.read_csv(csv_file_path)
+    
+    if "answer" not in df.columns:
+        return "Error: Column 'answer' not found in CSV!"
+
+    return df["answer"].iloc[0]  # Return the first value from the "answer" column
+
+
+
+
+def sort_json(json_data: str) -> str:
+    # Parse the JSON string into a Python object (list of dictionaries)
+    data = json.loads(json_data)
+    
+    # Sort the list of dictionaries by 'age' and 'name'
+    sorted_data = sorted(data, key=lambda x: (x["age"], x["name"]))
+    
+    # Return the sorted data as a JSON string (minified)
+    return json.dumps(sorted_data, separators=(",", ":"))
+
 
 def multi_cursor_to_json(input_text):
     return json.dumps(input_text.splitlines())

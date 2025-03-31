@@ -20,6 +20,7 @@ def fetch_low_rated_movies():
     response = requests.get(url)
     soup = bs4.BeautifulSoup(response.text, 'html.parser')
     movies = []
+
     for item in soup.select(".lister-item-content")[:25]:
         title = item.h3.a.text
         year = item.h3.find("span", class_="lister-item-year").text.strip()

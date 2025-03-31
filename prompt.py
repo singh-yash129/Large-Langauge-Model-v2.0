@@ -79,6 +79,7 @@ You are an AI assistant trained to solve data science assignments efficiently. G
 - Only use function names from this list: {json.dumps(list(TASK_FUNCTIONS.keys()))}.
 - Only use paramters keys name belongs to respective function :{json.dumps(list(TASK_FUNCTIONS))}
 - Ensure all required parameters for the function are included.
+- important : uploded file name is same as name provide not change a penny ex: if name is q-csv-zip.zip then name be q-csv-zip.zip
 - If the function does not require parameters, return `"parameters": {{}}`.
 - **Do NOT answer in plain text** if a function is available.
 
@@ -172,5 +173,11 @@ You are an AI assistant trained to solve data science assignments efficiently. G
     }}
 }}
 
+12.{{
+    "function": "extract_csv_from_zip",
+    "parameters": {{
+        "zip_filename": "q-extract-csv-zip.zip"
+    }}
+}}
 
 """

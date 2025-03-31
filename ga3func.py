@@ -18,7 +18,7 @@ def analyze_sentiment(text):
 # Task 2: Generate Random US Addresses
 def generate_addresses():
     url = "https://api.openai.com/v1/chat/completions"
-    headers = {"Authorization": "Bearer dummy_api_key"}
+    headers = {"Authorization": "Bearer {AIPROXY_TOKEN}"}
     payload = {
         "model": "gpt-4o-mini",
         "messages": [
@@ -34,7 +34,7 @@ def generate_addresses():
 # Task 3: Extract Text from Invoice Image
 def extract_invoice_text(image_base64):
     url = "https://api.openai.com/v1/chat/completions"
-    headers = {"Authorization": "Bearer dummy_api_key"}
+    headers = {"Authorization": "Bearer {AIPROXY_TOKEN}"}
     payload = {
         "model": "gpt-4o-mini",
         "messages": [
@@ -51,7 +51,7 @@ def extract_invoice_text(image_base64):
 # Task 4: Generate Text Embeddings
 def generate_text_embeddings(text_list):
     url = "https://api.openai.com/v1/embeddings"
-    headers = {"Authorization": "Bearer dummy_api_key"}
+    headers = {"Authorization": "Bearer {dummy_api_key}"}
     payload = {
         "model": "text-embedding-3-small",
         "input": text_list
@@ -63,7 +63,7 @@ def generate_text_embeddings(text_list):
 # Task 5: Generate AI-Based Image Descriptions
 def generate_image_description(image_base64):
     url = "https://api.openai.com/v1/chat/completions"
-    headers = {"Authorization": "Bearer dummy_api_key"}
+    headers = {"Authorization": "Bearer {AIPROXY_TOKEN}"}
     payload = {
         "model": "gpt-4o-mini",
         "messages": [
@@ -80,7 +80,7 @@ def generate_image_description(image_base64):
 # Task 6: Summarize a Given Text
 def summarize_text(text):
     url = "https://api.openai.com/v1/chat/completions"
-    headers = {"Authorization": "Bearer dummy_api_key"}
+    headers = {"Authorization": "Bearer {AIPROXY_TOKEN}"}
     payload = {
         "model": "gpt-4o-mini",
         "messages": [
@@ -95,7 +95,7 @@ def summarize_text(text):
 # Task 7: Translate Text to Spanish
 def translate_to_spanish(text):
     url = "https://api.openai.com/v1/chat/completions"
-    headers = {"Authorization": "Bearer dummy_api_key"}
+    headers = {"Authorization": "Bearer {AIPROXY_TOKEN}"}
     payload = {
         "model": "gpt-4o-mini",
         "messages": [
@@ -110,7 +110,7 @@ def translate_to_spanish(text):
 # Task 8: Generate a Short Story
 def generate_short_story(prompt):
     url = "https://api.openai.com/v1/chat/completions"
-    headers = {"Authorization": "Bearer dummy_api_key"}
+    headers = {"Authorization": "Bearer {AIPROXY_TOKEN}"}
     payload = {
         "model": "gpt-4o-mini",
         "messages": [
