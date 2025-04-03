@@ -15,8 +15,6 @@ pybase64
 httpx
 pdfplumber
 PyGithub
-geographiclib==2.0
-geopandas==1.0.1
 geopy==2.4.1
 duckdb
 rapidfuzz
