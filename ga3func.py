@@ -104,19 +104,7 @@ def most_similar_embedding():
 
 
 # Task 8: Generate a Short Story
-def generate_short_story(prompt):
-    url = "https://api.openai.com/v1/chat/completions"
-    headers = {"Authorization": "Bearer {AIPROXY_TOKEN}"}
-    payload = {
-        "model": "gpt-4o-mini",
-        "messages": [
-            {"role": "system", "content": "Generate a short story based on the following prompt."},
-            {"role": "user", "content": prompt}
-        ]
-    }
-    response = httpx.post(url, json=payload, headers=headers)
-    response.raise_for_status()
-    return response.json()
+
 
 # Task 9: Classify Text into Categories
 

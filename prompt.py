@@ -4,13 +4,12 @@ TASK_FUNCTIONS = {
     "check_file_integrity": ["file_name"],
     "compare_files": ["zip_filename"],
     "count_wednesdays": ["start_date", "end_date"],
-    "excel_formula": ["func"],
     "extract_all_text_from_html": ["file_name"],
     "extract_csv_from_zip": ["zip_filename"],
     "extract_hidden_value": ["file_name"],
     "find_git_repo_size": ["repo_name"],
     "get_vscode_version": [],
-    "google_sheets_formula": ["func"],
+  
     "list_large_files": ["zip_filename", "min_size", "date"],
     "make_http_request": ["email"],
     "move_and_rename_files": ["zip_filename"],
@@ -25,7 +24,7 @@ TASK_FUNCTIONS = {
     "compress_image": ["image_name", "output_name", "max_size"],
     "create_github_action": ["repo_name", "github_username","email"],
     "deploy_github_pages": ["repo_name", "github_username","email"],
-    "deploy_vercel_api": ["repo_name", "github_username",'file_name'],
+    "deploy_vercel": ["repo_name", "github_username",'file_name'],
     "generate_markdown": [],
     "google_colab_test": [],
     "image_library_colab": ['file_name'],
@@ -39,9 +38,9 @@ TASK_FUNCTIONS = {
     "generate_addresses": [],
     "llm_token": ['file_name','model'],
  
-    "generate_short_story": ["prompt"],
+ 
     "generate_text_embeddings": [],
-    'post_similar_embedding':[],
+  
     'LLM_say_yes':[],
 
     "count_ducks_on_page6": [],
@@ -57,14 +56,14 @@ TASK_FUNCTIONS = {
     "pdf_to_markdown": ["file_name"],
     'calculate_total_sales':['file_name'],
     "clean_and_aggregate_sales": ["file_name"],
-    "calculate_average_temperature": ["json_file"],
-    "clean_and_compute_margin": ["file_name"],
+    "calculate_average_temperature": ["file_name"],
+    "clean_and_calculate_margin": ["file_name"],
     "count_key_occurrences": ["file_name",'target_key'],
     "count_successful_get_requests": ["log_file_name"],
-    "count_unique_student_ids": ["file_name"],
+    "count_unique_students": ["file_name"],
     "extract_emails_from_text": ["file_name"],
     "top_data_consumer": ["log_file_name"],
-    "sum_sales_from_json": ["file_name"],
+
     'reconstruct_image':['scrambled_image','mapping_file_name'],
     'extract_transcript':['youtube_url','start_time','end_time','model_size']
 }

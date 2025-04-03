@@ -80,7 +80,8 @@ def image_library_colab(file_name):
     return light_pixels
 
 
-def deploy_vercel(repo_name, github_username, file_name, port=5050):
+def deploy_vercel(repo_name, github_username, file_name):
+    port=5050
     os.system(f"git clone https://github.com/{github_username}/{repo_name}.git")
     os.chdir(repo_name)
     
@@ -167,7 +168,8 @@ def push_docker_image(docker_username, repo_name):
     return(f"Docker image pushed to: https://hub.docker.com/repository/docker/{docker_username}/{repo_name}/general")
 
 
-def serve_students_data(csv_file):
+def serve_students_data(file_name):
+    csv_file=os.path.join(os.getcwd(),'tmp',file_name)
     app = FastAPI()
     
     app.add_middleware(

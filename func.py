@@ -23,8 +23,6 @@ TASK_IMPLEMENTATIONS = {
     "count_wednesdays": ga1func.count_wednesdays,
     "run_npx_command": ga1func.run_npx_command,
     "make_http_request": ga1func.make_http_request,
-    "google_sheets_formula": ga1func.google_sheets_formula,
-    "excel_formula": ga1func.excel_formula,
     "extract_csv_from_zip": ga1func.extract_csv_from_zip,
     "sort_json": ga1func.sort_json,
     "multi_cursor_to_json": ga1func.multi_cursor_to_json,
@@ -45,7 +43,7 @@ TASK_IMPLEMENTATIONS = {
     "deploy_github_pages": ga2func.deploy_github_pages,
     "google_colab_test": ga2func.google_colab_test,
     "image_library_colab": ga2func.image_library_colab,
-    "deploy_vercel_api": ga2func.deploy_vercel_api,
+    "deploy_vercel_api": ga2func.deploy_vercel,
     "create_github_action": ga2func.create_github_action,
     "push_docker_image": ga2func.push_docker_image,
     "run_fastapi_server": ga2func.run_fastapi_server,
@@ -54,31 +52,30 @@ TASK_IMPLEMENTATIONS = {
     "generate_addresses": ga3func.generate_addresses,
     "extract_invoice_text": ga3func.extract_invoice_text,
     "generate_text_embeddings": ga3func.generate_text_embeddings,
-    "generate_image_description": ga3func.generate_image_description,
-    "summarize_text": ga3func.summarize_text,
-    "translate_to_spanish": ga3func.translate_to_spanish,
-    "generate_short_story": ga3func.generate_short_story,
-    "classify_text": ga3func.classify_text,
+    "LLM_say_yes":ga3func.LLM_say_yes,
+    "llm_token":ga3func.llm_token,
     "count_ducks_on_page6": ga4func.count_ducks_on_page6,
     "fetch_low_rated_movies": ga4func.fetch_low_rated_movies,
     "fetch_wikipedia_outline": ga4func.fetch_wikipedia_outline,
-    "get_islamabad_forecast": ga4func.get_islamabad_forecast,
-    "get_max_latitude_lima": ga4func.get_max_latitude_lima,
+    "get_weather_forecast": ga4func.get_weather_forecast,
+    "get_max_latitude": ga4func.get_max_latitude,
     "get_hn_go_post": ga4func.get_hn_go_post,
     "get_newest_berlin_github_user": ga4func.get_newest_berlin_github_user,
     "generate_github_action": ga4func.generate_github_action,
     "extract_student_marks": ga4func.extract_student_marks,
     "pdf_to_markdown": ga4func.pdf_to_markdown,
-    "clean_excel_and_compute_margin": ga5func.clean_excel_and_compute_margin,
-    "count_unique_student_ids": ga5func.count_unique_student_ids,
+    "clean_and_calculate_margin": ga5func.clean_and_calculate_margin,
+    "count_unique_students": ga5func.count_unique_students,
     "count_successful_get_requests": ga5func.count_successful_get_requests,
-    "find_top_data_consumer": ga5func.find_top_data_consumer,
-    "aggregate_sales_by_city": ga5func.aggregate_sales_by_city,
-    "sum_sales_from_json": ga5func.sum_sales_from_json,
-    "count_oi_occurrences": ga5func.count_oi_occurrences,
-    "reconstruct_scrambled_image": ga5func.reconstruct_scrambled_image,
+    "top_data_consumer": ga5func.top_data_consumer,
+    "clean_and_aggregate_sales": ga5func.clean_and_aggregate_sales,
+    "count_key_occurrences": ga5func.count_key_occurrences,
+    "reconstruct_image": ga5func.reconstruct_image,
     "calculate_average_temperature": ga5func.calculate_average_temperature,
-    "extract_emails_from_text": ga5func.extract_emails_from_text
+    "extract_emails_from_text": ga5func.extract_emails_from_text,
+    'extract_transcript':ga5func.extract_transcript,
+    'most_similar_embedding':ga3func.most_similar_embedding
+   
 }
 
 
@@ -171,6 +168,15 @@ async def answer_question(question: str = Form(...), file: UploadFile = File(Non
                     task_params['file_name'] = file.filename
                 elif 'zip_filename' in task_params:    
                     task_params['zip_filename']=file.filename
+                elif 'log_file_name' in task_params:
+                    task_params['log_file_name']=file.filename
+                elif 'scrambled_image' in task_params:
+                    task_params['scrambled_image']=file.filename
+                elif 'mapping_file_name' in task_params:
+                    task_params['mapping_file_name']=file.filename
+
+                elif 'image_file' in task_params:
+                    task_params['image_file']=file.filename              
                 print(task_params)
               
                 return {"answer": execute_task(task_name,**task_params)}
