@@ -1,5 +1,4 @@
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException
-import openai
 import pandas as pd
 import zipfile
 import io
