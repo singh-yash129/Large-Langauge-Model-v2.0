@@ -32,18 +32,18 @@ TASK_FUNCTIONS = {
     "push_docker_image": ['docker_username','repo_name'],
     "run_fastapi_server": ['file_name'],
     "run_llamafile": ['file_name'],
+    'most_similar_embedding':[],
     "analyze_sentiment": [],
-    "classify_text": ["text"],
+  
     "extract_text_from_image": ["image_file"],
     "generate_addresses": [],
     "llm_token": ['file_name','model'],
-    "generate_image_description": ["image_base64"],
+ 
     "generate_short_story": ["prompt"],
     "generate_text_embeddings": [],
     'post_similar_embedding':[],
     'LLM_say_yes':[],
-    "summarize_text": ["text"],
-    "translate_to_spanish": ["text"],
+
     "count_ducks_on_page6": [],
     "extract_student_marks": ["file_name"],
     "fetch_low_rated_movies": [],
