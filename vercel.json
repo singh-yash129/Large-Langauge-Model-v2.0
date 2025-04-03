@@ -1,5 +1,14 @@
 {
-  "version": 2,
-  "builds": [],
-  "routes": []
+  "builds": [
+    {
+      "src": "func.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/func"
+    }
+  ]
 }
