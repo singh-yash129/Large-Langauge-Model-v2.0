@@ -92,35 +92,56 @@ def fetch_wikipedia_outline(country: str):
     return {"country": country, "outline": markdown_outline}
 
 # Task 4: BBC Weather API - Islamabad Forecast
+import requests
+from bs4 import BeautifulSoup
+import json
+import re
+import pandas as pd
+from datetime import datetime
+from urllib.parse import urlencode
+
 def get_weather_forecast(country):
     test_city = country
     location_url = 'https://locator-service.api.bbci.co.uk/locations?' + urlencode({
-   'api_key': 'AGbFAKx58hyjQScCXIYrxuEwJh2W2cmv',
-   's': test_city,
-   'stack': 'aws',
-   'locale': 'en',
-   'filter': 'international',
-   'place-types': 'settlement,airport,district',
-   'order': 'importance',
-   'a': 'true',
-   'format': 'json'
-})
+        'api_key': os.getenv('WEATHER_API'),
+        's': test_city,
+        'stack': 'aws',
+        'locale': 'en',
+        'filter': 'international',
+        'place-types': 'settlement,airport,district',
+        'order': 'importance',
+        'a': 'true',
+        'format': 'json'
+    })
+
     result = requests.get(location_url).json()
-    url      = 'https://www.bbc.com/weather/'+result['response']['results']['results'][0]['id']
+
+    # ✅ Check if results exist before accessing them
+    if 'response' not in result or 'results' not in result['response'] or 'results' not in result['response']['results'] or not result['response']['results']['results']:
+        return json.dumps({"error": "Location not found"}, indent=2)
+
+    location_id = result['response']['results']['results'][0]['id']
+    url = f'https://www.bbc.com/weather/{location_id}'
+    
     response = requests.get(url)
-    soup = BeautifulSoup(response.content,'html.parser')
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    # ✅ Check if elements exist before processing
     daily_high_values = soup.find_all('span', attrs={'class': 'wr-day-temperature__high-value'})
     daily_low_values  = soup.find_all('span', attrs={'class': 'wr-day-temperature__low-value'})
     daily_summary = soup.find('div', attrs={'class': 'wr-day-summary'})
+
+    if not daily_high_values or not daily_low_values or not daily_summary:
+        return json.dumps({"error": "Weather data not found"}, indent=2)
+
     daily_summary_list = re.findall('[a-zA-Z][^A-Z]*', daily_summary.text)
     datelist = pd.date_range(datetime.today(), periods=len(daily_high_values)).tolist()
     datelist = [datelist[i].date().strftime('%y-%m-%d') for i in range(len(datelist))]
-    weather_data = {}
-    for i in range(len(datelist)):
-      weather_data[datelist[i]] = daily_summary_list[i]
 
-    weather_json = json.dumps(weather_data, indent=2)
-    print(weather_json)
+    weather_data = {datelist[i]: daily_summary_list[i] for i in range(len(datelist))}
+
+    return json.dumps(weather_data, indent=2)
+
 
 
 

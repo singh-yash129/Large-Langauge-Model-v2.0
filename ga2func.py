@@ -12,26 +12,29 @@ import subprocess
 from Prebuilt import gunc
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
-from flask_cors import CORS,cors
+from flask_cors import CORS
 from starlette.responses import Response
 import pandas as pd
 def generate_markdown():
     md_content = gunc('q-markdown')
     return md_content
-
+from fastapi.responses import StreamingResponse
+import base64
 def compress_image(file_name):
-    file=os.path.join(os.getcwd(),'tmp',file_name)
-    """Receive an image, compress it, and return the modified image."""
-    with Image.open(file.file) as img:
+    file = os.path.join(os.getcwd(), 'tmp', file_name)
+
+    with Image.open(file) as img:
         if img.mode == "RGBA":
             img = img.convert("RGB")
-        
-        # Save image to an in-memory buffer
+
         img_buffer = io.BytesIO()
         img.save(img_buffer, format="WEBP", quality=85, optimize=True)
         img_buffer.seek(0)
-    
-    return Response(content=img_buffer.getvalue(), media_type="image/webp")
+
+        # Convert to Base64
+        image_base64 = base64.b64encode(img_buffer.getvalue()).decode("utf-8")
+
+    return image_base64 
 
 def deploy_github_pages(repo_name, github_username,email):
     os.system(f"git clone https://github.com/{github_username}/{repo_name}.git")
@@ -73,11 +76,12 @@ def image_library_colab(file_name):
     rgb = np.array(image) / 255.0
     
     # Convert to lightness channel
-    lightness = np.apply_along_axis(lambda x: colorsys.rgb_to_hls(*x)[1], 2, rgb)
+    lightness = np.apply_along_axis(lambda x: colorsys.rgb_to_hls(*x[:3])[1], 2, rgb)
+
     
     # Count pixels with lightness > 0.849
     light_pixels = np.sum(lightness > 0.849)
-    return light_pixels
+    return int(light_pixels)
 
 
 def deploy_vercel(repo_name, github_username, file_name):

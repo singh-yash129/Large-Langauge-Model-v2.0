@@ -74,7 +74,8 @@ TASK_IMPLEMENTATIONS = {
     "calculate_average_temperature": ga5func.calculate_average_temperature,
     "extract_emails_from_text": ga5func.extract_emails_from_text,
     'extract_transcript':ga5func.extract_transcript,
-    'most_similar_embedding':ga3func.most_similar_embedding
+    'most_similar_embedding':ga3func.most_similar_embedding,
+    'extract_text_from_image':ga3func.extract_text_from_image,
    
 }
 
