@@ -12,7 +12,7 @@ import os
 import pandas as pd
 import numpy as np
 from datetime import datetime
-from fuzzywuzzy import process
+
 
 def clean_and_calculate_margin(file_name):
     """
@@ -210,9 +210,6 @@ def top_data_consumer(log_file_name):
 # top_ip, total_bytes = top_data_consumer("path_to_apache_logs.gz")
 # print(f"Top IP: {top_ip}, Total Bytes: {total_bytes}")
 
-import pandas as pd
-from collections import defaultdict
-from fuzzywuzzy import fuzz, process
 
 def clean_and_aggregate_sales(file_name):
     file_path=os.path.join(os.getcwd(),'tmp',file_name)
@@ -364,14 +361,16 @@ def get_high_quality_posts(file_name):
     return [row[0] for row in result]
 
 
-import yt_dlp
-import whisper
 import os
+import base64
+import subprocess
+import json
+import requests
 
 def extract_transcript(youtube_url, start_time, end_time, model_size='base'):
     """
     Downloads the audio from a YouTube video, extracts the specified segment,
-    and transcribes it using OpenAI Whisper.
+    and transcribes it using Google Gemini API.
 
     Parameters:
     youtube_url (str): The URL of the YouTube video.
@@ -396,23 +395,59 @@ def extract_transcript(youtube_url, start_time, end_time, model_size='base'):
         'outtmpl': 'audio',
     }
     
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([youtube_url])
-    
-    # Load Whisper model
-    model = whisper.load_model(model_size)
-    
-    # Transcribe only the required segment
-    result = model.transcribe("audio.mp3", fp16=False)
-    
-    # Extract relevant segment
-    transcript = " ".join([segment['text'] for segment in result['segments'] 
-                            if start_time <= segment['start'] <= end_time])
-    
+    # Run yt-dlp to download the audio
+    subprocess.run(['yt-dlp', '--format', 'bestaudio', '--postprocessor-args', '-vn', '-acodec', 'mp3', '--output', audio_file, youtube_url])
+
+    # Encode the audio file in base64
+    with open(audio_file, "rb") as audio_file_obj:
+        audio_base64 = base64.b64encode(audio_file_obj.read()).decode('utf-8')
+
+    # Send a request to Google Gemini API for transcription
+    headers = {
+        "X-Goog-API-Key": "your-gemini-api-key",
+        "Content-Type": "application/json",
+    }
+
+    # Prepare the data payload
+    data = {
+        "contents": [
+            {
+                "role": "user",
+                "parts": [
+                    {
+                        "inline_data": {
+                            "mime_type": "audio/mp3",
+                            "data": audio_base64
+                        }
+                    },
+                    {"text": "Transcribe this"}
+                ]
+            }
+        ]
+    }
+
+    # Make the request to Google Gemini API
+    response = requests.post(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:streamGenerateContent?alt=sse",
+        headers=headers,
+        data=json.dumps(data)
+    )
+
+    if response.status_code == 200:
+        # Process the response
+        result = response.json()
+        
+        # Extract the transcribed text from the response
+        transcript = result.get('contents', [])[0].get('parts', [])[0].get('text', "")
+        return transcript
+    else:
+        # Handle errors
+        print(f"Error: {response.status_code}, {response.text}")
+        return None
+
     # Clean up the downloaded audio file
-    os.remove("audio.mp3")
-    
-    return transcript
+    os.remove(audio_file)
+
 
 
 def calculate_average_temperature(file_name):

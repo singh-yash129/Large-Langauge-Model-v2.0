@@ -3,8 +3,7 @@ import requests
 import bs4
 from bs4 import BeautifulSoup
 import json
-import pdfplumber
-import github
+
 from datetime import datetime
                 # to convert API to json format
 
@@ -225,22 +224,38 @@ def generate_github_action():
     return action_yaml
 import os
 # Task 9: PDF Parsing - Student Marks Analysis
-def extract_student_marks(file_name):
-    pdf_path=os.path.join(os.getcwd(),'tmp',file_name)
-    with pdfplumber.open(pdf_path) as pdf:
-        marks = []
-        for page in pdf.pages:
-            text = page.extract_table()
-            for row in text:
-                if 19 <= int(row[0]) <= 51 and int(row[4]) >= 37:
-                    marks.append(int(row[1]))
-    return sum(marks)
+import fitz  # PyMuPDF
+import os
 
-# Task 10: PDF to Markdown Conversion
+def extract_student_marks(file_name):
+    pdf_path = os.path.join(os.getcwd(), 'tmp', file_name)
+    doc = fitz.open(pdf_path)
+    marks = []
+    
+    for page in doc:
+        text = page.get_text("text")  # Extract text as plain text
+        lines = text.splitlines()
+        
+        for line in lines:
+            row = line.split()  # Split the row into columns
+            if len(row) > 4:  # Ensure there's enough data in the row
+                try:
+                    if 19 <= int(row[0]) <= 51 and int(row[4]) >= 37:
+                        marks.append(int(row[1]))  # Collect the marks
+                except ValueError:
+                    continue  # Skip if any conversion fails (e.g., if the data is malformed)
+    
+    return sum(marks)
+import fitz  # PyMuPDF
+import os
+
 def pdf_to_markdown(file_name):
-    pdf_path=os.path.join(os.getcwd(),'tmp',file_name)
-    with pdfplumber.open(pdf_path) as pdf:
-        markdown_text = ""
-        for page in pdf.pages:
-            markdown_text += "\n" + page.extract_text() + "\n"
+    pdf_path = os.path.join(os.getcwd(), 'tmp', file_name)
+    doc = fitz.open(pdf_path)
+    markdown_text = ""
+    
+    for page in doc:
+        text = page.get_text("text")  # Extract text as plain text
+        markdown_text += "\n" + text + "\n"  # Add text with Markdown formatting
+    
     return markdown_text
