@@ -151,14 +151,13 @@ async def answer_question(question: str = Form(...), file: UploadFile = File(Non
 
 
 
-        print("Raw AI response:", response_json)
 
         ai_response = response_json["choices"][0]["message"]["content"].strip()
-        print(ai_response)
+
         if ai_response.startswith("```json"):
             ai_response = ai_response.replace("```json", "").replace("```", "").strip()
         # If GPT-4o Mini suggests a function call, execute it
-        print(ai_response)
+
         try:
             parsed_response = json.loads(ai_response)
             if "function" in parsed_response and parsed_response["function"] in TASK_FUNCTIONS:
