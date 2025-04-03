@@ -1,5 +1,5 @@
 import httpx
-
+from Prebuilt import gunc
 # Task 1: Sentiment Analysis API Call
 def analyze_sentiment(text):
     url = "https://api.openai.com/v1/chat/completions"
@@ -136,3 +136,7 @@ def classify_text(text):
     response = httpx.post(url, json=payload, headers=headers)
     response.raise_for_status()
     return response.json()
+
+
+def LLM_say_yes():
+    return gunc('q-get-llm-to-say-yes')

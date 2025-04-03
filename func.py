@@ -92,18 +92,37 @@ def execute_task(task_name, **kwargs):
         if function:
             return function(**kwargs)  # ✅ Call actual function
         return "Unknown task"
-
-
+# with open('ans.json', 'r', encoding='utf-8') as file:
+#     data = json.load(file) 
+# def gunc(req):
+#     return data[req]
+# item_list = list(data.keys())
 UPLOAD_DIR='tmp'
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 @app.post("/api/")
 async def answer_question(question: str = Form(...), file: UploadFile = File(None)):
+    
+#     prompt = f'''You are an awesome task assistant. Your sole responsibility is to return exactly one item name in any given condition and item name is most similar to the question. The item name must be selected from the provided list.
+
+# Key instructions:
+# 1. The item name must be chosen from the list provided: {item_list}.
+# 2. You should not output any words other than the item name.
+# 3. The output must strictly follow JSON format, as shown below:
+# ```json
+# {{
+#     "function": "item_name_here"
+# }}
+# '''
+
     try:
         saved_file_path = None
+        saved_file=False
         if file:
+            saved_file=True
             if isinstance(file.filename, str) and file.filename.strip():
     # Ensure the filename does not contain invalid characters
-                saved_file_path = os.path.join(UPLOAD_DIR, file.filename)
+                saved_file_path = os.path.join(os.getcwd(),UPLOAD_DIR, file.filename)
+                print(saved_file_path)
             else:
                 raise ValueError("Invalid or empty file name.")
             
@@ -147,8 +166,14 @@ async def answer_question(question: str = Form(...), file: UploadFile = File(Non
             if "function" in parsed_response and parsed_response["function"] in TASK_FUNCTIONS:
                 task_name = parsed_response["function"]
                 task_params = parsed_response.get("parameters", {})
+        
+                if 'file_name' in task_params:
+                    task_params['file_name'] = file.filename
+                elif 'zip_filename' in task_params:    
+                    task_params['zip_filename']=file.filename
+                print(task_params)
               
-                return {"answer": execute_task(task_name, **task_params)}
+                return {"answer": execute_task(task_name,**task_params)}
         except json.JSONDecodeError:
             pass  # If response isn't JSON, assume it's a direct answer
         
