@@ -188,6 +188,3 @@ async def answer_question(question: str = Form(...), file: UploadFile = File(Non
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-from mangum import Mangum
-
-handler = Mangum(app)  # 👈 Wrap FastAPI app for Vercel
