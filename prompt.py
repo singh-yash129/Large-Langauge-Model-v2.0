@@ -44,7 +44,7 @@ TASK_FUNCTIONS = {
     'LLM_say_yes':[],
 
     "count_ducks_on_page6": [],
-    "extract_student_marks": ["file_name"],
+    "extract_student_marks": ["file_name",'filter_subject','filter_marks','from_page','to_page'],
     "fetch_low_rated_movies": [],
     "fetch_wikipedia_outline": ["country"],
     'get_high_quality_posts':['file_name'],

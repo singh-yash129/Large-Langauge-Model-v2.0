@@ -13,7 +13,7 @@ from prompt import prompt,TASK_FUNCTIONS
 app = FastAPI()
 
 # Set your AIPROXY_TOKEN
-AIPROXY_TOKEN = os.getenv("AIPROXY_TOKEN")
+AIPROXY_TOKEN = os.environ.get("AIPROXY_TOKEN")
 AIPROXY_URL = "https://aiproxy.sanand.workers.dev/openai/v1/chat/completions"
 
 
@@ -156,7 +156,7 @@ async def answer_question(question: str = Form(...), file: UploadFile = File(Non
         if ai_response.startswith("```json"):
             ai_response = ai_response.replace("```json", "").replace("```", "").strip()
         # If GPT-4o Mini suggests a function call, execute it
-
+        print(ai_response)
         try:
             parsed_response = json.loads(ai_response)
             if "function" in parsed_response and parsed_response["function"] in TASK_FUNCTIONS:

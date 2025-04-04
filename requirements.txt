@@ -19,3 +19,5 @@ PyMuPDF
 
 geopy==2.4.1
 
+pymupdf4llm
+tabula-py

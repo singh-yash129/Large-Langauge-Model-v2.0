@@ -224,38 +224,79 @@ def generate_github_action():
     return action_yaml
 import os
 # Task 9: PDF Parsing - Student Marks Analysis
-import fitz  # PyMuPDF
+ # PyMuPDF
 import os
 
-def extract_student_marks(file_name):
+import os
+import pandas as pd
+import tabula
+
+def extract_student_marks(file_name,filter_subject,from_page,to_page,filter_marks):
+    # Get the path of the PDF
     pdf_path = os.path.join(os.getcwd(), 'tmp', file_name)
-    doc = fitz.open(pdf_path)
-    marks = []
     
-    for page in doc:
-        text = page.get_text("text")  # Extract text as plain text
-        lines = text.splitlines()
-        
-        for line in lines:
-            row = line.split()  # Split the row into columns
-            if len(row) > 4:  # Ensure there's enough data in the row
-                try:
-                    if 19 <= int(row[0]) <= 51 and int(row[4]) >= 37:
-                        marks.append(int(row[1]))  # Collect the marks
-                except ValueError:
-                    continue  # Skip if any conversion fails (e.g., if the data is malformed)
+    # Check if the file exists
+    if not os.path.exists(pdf_path):
+        print(f"Error: The file '{file_name}' does not exist.")
+        return
     
-    return sum(marks)
-import fitz  # PyMuPDF
+    # Read the tables from the PDF
+    tables = tabula.read_pdf(pdf_path, pages="all", multiple_tables=True)
+    
+    # Initialize an empty list to store all DataFrames
+    all_dfs = []
+    
+    # Iterate through each table and add a "Group" column based on the page number
+    for i, table in enumerate(tables):
+        # Add a "Group" column to the table
+        table["Group"] = i + 1  # Group 1 for Page 1, Group 2 for Page 2, etc.
+        # Append the table to the list
+        all_dfs.append(table)
+    
+    # Combine all DataFrames into a single DataFrame
+    df = pd.concat(all_dfs, ignore_index=True)
+    
+    # Rename columns for easier access (assuming the structure is consistent)
+    df.columns = ["Maths", "Physics", "English", "Economics", "Biology", "Group"]
+    
+    # Convert marks to numerical data types
+    df["Maths"] = pd.to_numeric(df["Maths"], errors="coerce")
+    df["Physics"] = pd.to_numeric(df["Physics"], errors="coerce")
+    df["English"] = pd.to_numeric(df["English"], errors="coerce")
+    df["Economics"] = pd.to_numeric(df["Economics"], errors="coerce")
+    df["Biology"] = pd.to_numeric(df["Biology"], errors="coerce")
+    df["Group"] = pd.to_numeric(df["Group"], errors="coerce")
+    
+    # Drop rows with missing values (if any)
+    df.dropna(inplace=True)
+    
+    # Display the first few rows of the combined DataFrame
+    print("First few rows of the data:")
+    print(df.head())
+    
+    # Display the data types of the columns
+    print("\nData types of the columns:")
+    print(df.dtypes)
+    
+    # Example of filtering: students with Physics marks >= 56 and Group number between 46 and 79
+    filtered_df = df[(df[filter_subject] >= filter_marks) & (df["Group"].between(from_page, to_page))]
+    print(filtered_df)
+    
+    # Calculate the total marks for Economics in the filtered DataFrame
+    total_economics_marks = filtered_df[filter_subject].sum()
+    # Corrected to "Economics"
+    
+    return int(total_economics_marks)
+
+
+
+
+ # PyMuPDF
 import os
 
 def pdf_to_markdown(file_name):
     pdf_path = os.path.join(os.getcwd(), 'tmp', file_name)
-    doc = fitz.open(pdf_path)
-    markdown_text = ""
-    
-    for page in doc:
-        text = page.get_text("text")  # Extract text as plain text
-        markdown_text += "\n" + text + "\n"  # Add text with Markdown formatting
-    
-    return markdown_text
+ # Add text with Markdown formatting
+    import pymupdf4llm
+    md_text = pymupdf4llm.to_markdown(pdf_path)
+    return md_text
