@@ -17,7 +17,7 @@ Pillow
 beautifulsoup4
 PyMuPDF
 docker
-pygithub
+PyGithub
 geographiclib==2.0
 geopandas==1.0.1
 geopy==2.4.1

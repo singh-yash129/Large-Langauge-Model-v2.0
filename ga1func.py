@@ -10,7 +10,8 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 from pathlib import Path
 from Prebuilt import gunc
-import pygithub
+from github import Github
+
 
 def get_vscode_version():
     return gunc('q-vs-code-version')
