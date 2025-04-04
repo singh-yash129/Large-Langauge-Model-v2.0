@@ -13,7 +13,7 @@ from prompt import prompt,TASK_FUNCTIONS
 app = FastAPI()
 
 # Set your AIPROXY_TOKEN
-AIPROXY_TOKEN = os.environ.get("AIPROXY_TOKEN")
+AIPROXY_TOKEN = os.getenv("AIPROXY_TOKEN")
 AIPROXY_URL = "https://aiproxy.sanand.workers.dev/openai/v1/chat/completions"
 
 

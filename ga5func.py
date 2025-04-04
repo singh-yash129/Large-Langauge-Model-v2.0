@@ -404,7 +404,7 @@ def extract_transcript(youtube_url, start_time, end_time, model_size='base'):
 
     # Send a request to Google Gemini API for transcription
     headers = {
-        "X-Goog-API-Key": "your-gemini-api-key",
+        "X-Goog-API-Key": os.getenv("GOOGLE_API_KEY"),
         "Content-Type": "application/json",
     }
 
