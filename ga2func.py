@@ -1,7 +1,7 @@
 
 import PIL.Image as Image
 import io
-
+import docker
 import requests
 import fastapi
 from fastapi import FastAPI

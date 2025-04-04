@@ -16,7 +16,10 @@ tiktoken==0.9.0
 Pillow
 beautifulsoup4
 PyMuPDF
-
+docker
+pygithub
+geographiclib==2.0
+geopandas==1.0.1
 geopy==2.4.1
 
 pymupdf4llm
